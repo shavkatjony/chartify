@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowDraw - Modern Collaborative Whiteboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Open Sans font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-pen-fancy"></i>
+                <span>FlowDraw</span>
+            </div>
+            <div class="toolbar">
+                <div class="tool-group">
+                    <button id="select-tool" class="tool-btn active" title="Select Tool (V)">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </button>
+                    <button id="hand-tool" class="tool-btn" title="Hand Tool (H)">
+                        <i class="fas fa-hand"></i>
+                    </button>
+                    <button id="pen-tool" class="tool-btn" title="Pen Tool (P)">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button id="shape-tool" class="tool-btn" title="Shape Tool (S)">
+                        <i class="fas fa-shapes"></i>
+                    </button>
+                    <button id="text-tool" class="tool-btn" title="Text Tool (T)">
+                        <i class="fas fa-font"></i>
+                    </button>
+                    <button id="note-tool" class="tool-btn" title="Sticky Note (N)">
+                        <i class="fas fa-sticky-note"></i>
+                    </button>
+                    <button id="connector-tool" class="tool-btn" title="Connector Tool (C)">
+                        <i class="fas fa-project-diagram"></i>
+                    </button>
+                    <button id="eraser-tool" class="tool-btn" title="Eraser Tool (E)">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </div>
+                <div class="divider"></div>
+                <div class="color-picker">
+                    <div class="color-swatch active" style="background-color: #000000;" data-color="#000000"></div>
+                    <div class="color-swatch" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                    <div class="color-swatch" style="background-color: #00aa00;" data-color="#00aa00"></div>
+                    <div class="color-swatch" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                    <div class="color-swatch custom" title="Custom Color">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="tool-group">
+                    <button id="undo-btn" class="tool-btn" title="Undo (Ctrl+Z)" disabled>
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button id="redo-btn" class="tool-btn" title="Redo (Ctrl+Y)" disabled>
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="user-controls">
+                <button id="share-btn" class="btn primary" title="Share">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share</span>
+                </button>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Sidebar -->
+            <div class="sidebar left-sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-layer-group"></i> Layers</h3>
+                    <div class="layers-panel" id="layers-panel">
+                        <!-- Layers will be added dynamically -->
+                        <div class="empty-state">
+                            <p>No layers yet</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-images"></i> Templates</h3>
+                    <div class="templates-panel">
+                        <div class="template-category">
+                            <h4>Business</h4>
+                            <div class="template-list">
+                                <div class="template-item" data-template="flowchart">
+                                    <img src="assets/template-flowchart.svg" alt="Flowchart">
+                                    <span>Flowchart</span>
+                                </div>
+                                <div class="template-item" data-template="mindmap">
+                                    <img src="assets/template-mindmap.svg" alt="Mind Map">
+                                    <span>Mind Map</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div class="canvas-controls">
+                    <div class="zoom-controls">
+                        <button id="zoom-out" class="zoom-btn" title="Zoom Out (-)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span id="zoom-level">100%</span>
+                        <button id="zoom-in" class="zoom-btn" title="Zoom In (+)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button id="fit-screen" class="zoom-btn" title="Fit to Screen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                    <div class="canvas-options">
+                        <button id="grid-toggle" class="toggle-btn" title="Toggle Grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button id="snap-toggle" class="toggle-btn" title="Toggle Snap to Grid">
+                            <i class="fas fa-magnet"></i>
+                        </button>
+                    </div>
+                </div>
+                <canvas id="drawing-canvas"></canvas>
+                <div class="minimap" id="minimap">
+                    <canvas id="minimap-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="sidebar right-sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-sliders-h"></i> Properties</h3>
+                    <div id="properties-panel" class="properties-panel">
+                        <div class="empty-state">
+                            <p>Select an element to edit its properties</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-users"></i> Collaborators</h3>
+                    <div id="collaborators-panel" class="collaborators-panel">
+                        <!-- Collaborators will be added dynamically -->
+                        <div class="collaborator">
+                            <div class="user-dot" style="background-color: #ff5722;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>You</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-robot"></i> AI Assistant</h3>
+                    <div class="ai-panel">
+                        <input type="text" id="ai-prompt" placeholder="Generate a diagram...">
+                        <button id="ai-generate" class="btn primary">
+                            <i class="fas fa-magic"></i>
+                            <span>Generate</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal Templates -->
+        <div class="modal" id="share-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Share Your Board</h3>
+                    <button class="close-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="share-link">
+                        <input type="text" id="share-url" value="https://flowdraw.app/board/abc123" readonly>
+                        <button id="copy-link" class="btn">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <div class="share-options">
+                        <h4>Permissions</h4>
+                        <div class="radio-option">
+                            <input type="radio" id="permission-view" name="permission" value="view">
+                            <label for="permission-view">View only</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="permission-edit" name="permission" value="edit" checked>
+                            <label for="permission-edit">Can edit</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn secondary close-modal">Cancel</button>
+                    <button class="btn primary" id="share-confirm">Share</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/core/canvas.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/tools/selection.js"></script>
+    <script src="js/tools/pen.js"></script>
+    <script src="js/tools/shapes.js"></script>
+    <script src="js/tools/text.js"></script>
+    <script src="js/tools/connector.js"></script>
+    <script src="js/ui/toolbar.js"></script>
+    <script src="js/ui/sidebar.js"></script>
+    <script src="js/ui/modals.js"></script>
+    <script src="js/collaboration/realtime.js"></script>
+    <script src="js/ai/generator.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
